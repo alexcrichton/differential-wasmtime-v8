@@ -249,7 +249,7 @@ fn run_once(data: &[u8], isolate: &mut v8::Isolate) -> Result<(), Error> {
         }
 
         fn same_float(a: f64, b: f64) {
-            assert!(a == b || (a.is_nan() && b.is_nan()));
+            assert!(a == b || (a.is_nan() && b.is_nan()), "{} != {}", a, b);
         }
     }
 
@@ -291,18 +291,15 @@ fn run_once(data: &[u8], isolate: &mut v8::Isolate) -> Result<(), Error> {
                 }
                 TrapCode::BadSignature => return verify_v8(&["function signature mismatch"]),
                 TrapCode::IntegerOverflow | TrapCode::BadConversionToInteger => {
-                    return verify_v8(&["float unrepresentable in integer range"])
+                    return verify_v8(&[
+                        "float unrepresentable in integer range",
+                        "divide result unrepresentable",
+                    ])
                 }
                 other => log::debug!("unknown code {:?}", other),
             }
         }
-        if v8.contains("table initializer is out of bounds") {
-            verify_wasmtime("out of bounds table access")
-        // if v8.contains("data segment is out of bounds") {
-        //     verify_wasmtime("out of bounds memory access")
-        } else {
-            verify_wasmtime("xxxxxxxxxxxxxxxxxxxxxxxx");
-        }
+        verify_wasmtime("xxxxxxxxxxxxxxxxxxxxxxxx");
     }
 
     fn first_exported_function(module: &Module) -> Option<(&str, FuncType)> {
