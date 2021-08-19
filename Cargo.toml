@@ -1,0 +1,14 @@
+[package]
+name = "diff-v8"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+rand = "*"
+arbitrary = "*"
+log = "*"
+env_logger = "*"
+rusty_v8 = "*"
+wasm-smith = "*"
+wasmtime = { path = '../wasmtime/crates/wasmtime' }
+anyhow = "*"
